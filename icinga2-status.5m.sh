@@ -37,6 +37,7 @@ class Icinga:
   def getStuff(self, status, object):
     stuff=[]
     status=str(status)
+    
     headers = { 'Accept': 'application/json', 'X-HTTP-Method-Override': 'GET' }
     if object == "host" or object == "service":
       if status == "1":
@@ -48,9 +49,13 @@ class Icinga:
 ### list hostgroups and their status would be cool
     elif object == "hostgroup":
       url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?format=json"
-
-    r = requests.get(url, auth=HTTPBasicAuth(self.icinga_user, self.icinga_pw), verify=False, allow_redirects=False, headers=headers)
-    if(r.status_code == 200):
+    try:
+     r = requests.get(url, auth=HTTPBasicAuth(self.icinga_user, self.icinga_pw), verify=False, timeout=15, allow_redirects=False, headers=headers)
+    except:
+     print("fail|color=red")
+     print("---")
+     raise SystemExit("Icinga2 down or wrong credentials")
+     if(r.status_code == 200):
       jresults = json.loads(r.content)
       for i in jresults:
         if object == "hostgroup":
@@ -104,6 +109,7 @@ print("Services OK: \t"+str(len(servok))+"|href="+icinga_ref+"/list/services?ser
 
 #Print hostgroups
 print("---")
+print("Hostgroups|color=gray size=14")
 if len(hostgroups) != 0:
   for h in hostgroups:
     print(h+"| color=gray href="+icinga_ref+"/list/hosts?hostgroup_name="+h)
