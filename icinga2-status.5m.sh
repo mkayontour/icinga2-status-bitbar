@@ -28,9 +28,9 @@ warnings.filterwarnings("ignore")
 
 
 class Icinga:
-  icinga_host = "192.168.56.101"
-  icinga_user = "icingaadmin"
-  icinga_pw = "icinga"
+  icinga_host = ""
+  icinga_user = ""
+  icinga_pw = ""
   if icinga_user == "" or icinga_pw == "":
       raise SystemExit("Require api_user or api_secret")
   
