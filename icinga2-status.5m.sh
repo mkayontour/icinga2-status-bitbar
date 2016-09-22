@@ -28,15 +28,16 @@ warnings.filterwarnings("ignore")
 
 
 class Icinga:
-  icinga_host = ""
-  icinga_user = ""
-  icinga_pw = ""
+  icinga_host = "192.168.56.101"
+  icinga_user = "icingaadmin"
+  icinga_pw = "icinga"
   if icinga_user == "" or icinga_pw == "":
       raise SystemExit("Require api_user or api_secret")
   
   def getStuff(self, status, object):
     stuff=[]
     status=str(status)
+    
     headers = { 'Accept': 'application/json', 'X-HTTP-Method-Override': 'GET' }
     if object == "host" or object == "service":
       if status == "1":
@@ -48,8 +49,12 @@ class Icinga:
 ### list hostgroups and their status would be cool
     elif object == "hostgroup":
       url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?format=json"
-
-    r = requests.get(url, auth=HTTPBasicAuth(self.icinga_user, self.icinga_pw), verify=False, allow_redirects=False, headers=headers)
+    try:
+      r = requests.get(url, auth=HTTPBasicAuth(self.icinga_user, self.icinga_pw), verify=False, timeout=15, allow_redirects=False, headers=headers)
+    except:
+      print("fail|color=red")
+      print("---")
+      raise SystemExit("Icinga2 down or wrong credentials")
     if(r.status_code == 200):
       jresults = json.loads(r.content)
       for i in jresults:
@@ -57,6 +62,9 @@ class Icinga:
           stuff.append(i[object+"_name"])
         else:
           stuff.append(i[object+"_display_name"])
+    else:
+      print("Fail|color=red")
+      raise SystemExit("wrong status code"+str(r.status_code))
     return(stuff)
 i = Icinga()
 
@@ -104,6 +112,7 @@ print("Services OK: \t"+str(len(servok))+"|href="+icinga_ref+"/list/services?ser
 
 #Print hostgroups
 print("---")
+print("Hostgroups|color=gray size=14")
 if len(hostgroups) != 0:
   for h in hostgroups:
     print(h+"| color=gray href="+icinga_ref+"/list/hosts?hostgroup_name="+h)
