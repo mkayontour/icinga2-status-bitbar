@@ -5,7 +5,8 @@ If all hosts are up or all host problems are handled then you got a "green" stat
 
 Furthermore you get some more detailed information about unhandled hosts and services with direct links to their lists in icingaweb
 
-![](https://github.com/mkayontour/icinga2-status-bitbar/blob/master/preview.png "Preview")
+![](https://github.com/mkayontour/icinga2-status-bitbar/blob/master/prev/preview.png "Preview")
+![](https://github.com/mkayontour/icinga2-status-bitbar/blob/master/prev/preview1.png "Preview1")
 
 
 ##Installation
