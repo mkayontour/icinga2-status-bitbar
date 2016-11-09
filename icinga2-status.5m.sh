@@ -28,6 +28,8 @@ warnings.filterwarnings("ignore")
 
 
 class Icinga:
+  http_protocol = "http"
+  icingaweb2_uri = "/icingaweb2"
   icinga_host = ""
   icinga_user = ""
   icinga_pw = ""
@@ -41,14 +43,14 @@ class Icinga:
     headers = { 'Accept': 'application/json', 'X-HTTP-Method-Override': 'GET' }
     if object == "host" or object == "service":
       if status == "1":
-        url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?"+object+"_state="+status+"&sort="+object+"_severity&"+object+"_unhandled=1&format=json"
+        url = self.http_protocol+"://"+self.icinga_host+self.icingaweb2_uri+"/monitoring/list/"+object+"s?"+object+"_state="+status+"&sort="+object+"_severity&"+object+"_unhandled=1&format=json"
       elif status == "2":
-        url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?"+object+"_state="+status+"&"+object+"_handled=0&format=json"
+        url = self.http_protocol+"://"+self.icinga_host+self.icingaweb2_uri+"/monitoring/list/"+object+"s?"+object+"_state="+status+"&"+object+"_handled=0&format=json"
       else:
-        url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?"+object+"_problem="+ str(status) +"&format=json"
+        url = self.http_protocol+"://"+self.icinga_host+self.icingaweb2_uri+"/monitoring/list/"+object+"s?"+object+"_problem="+ str(status) +"&format=json"
 ### list hostgroups and their status would be cool
     elif object == "hostgroup":
-      url = "http://"+self.icinga_host+"/icingaweb2/monitoring/list/"+object+"s?format=json"
+      url = self.http_protocol+"://"+self.icinga_host+self.icingaweb2_uri+"/monitoring/list/"+object+"s?format=json"
     try:
       r = requests.get(url, auth=HTTPBasicAuth(self.icinga_user, self.icinga_pw), verify=False, timeout=15, allow_redirects=False, headers=headers)
     except:
@@ -77,7 +79,7 @@ servok = i.getStuff(0,"service")
 servwarn = i.getStuff(1,"service")
 hostgroups = i.getStuff(0,"hostgroup")
 
-icinga_ref ="http://"+i.icinga_host+"/icingaweb2/monitoring"
+icinga_ref =i.http_protocol+"://"+i.icinga_host+i.icingaweb2_uri+"/monitoring"
 #Print current status
 if len(down) != 0:
   print( "❗️ "+ str(len(down))+" | color=red")
